@@ -1,41 +1,39 @@
 class Usuario {
-  final int id_usuario; 
+  final int id;
   final String nombre;
   final String apellido;
   final String email;
-  final String contrasenia;
+  final String contrasena;
   final String tipoUsuario;
 
   Usuario({
-    required this.id_usuario, 
+    required this.id,
     required this.nombre,
     required this.apellido,
     required this.email,
-    required this.contrasenia,
+    required this.contrasena,
     required this.tipoUsuario,
   });
 
-  // Convertir un mapa a un objeto Usuario
-  factory Usuario.fromMap(Map<String, dynamic> map) {
-    return Usuario(
-      id_usuario: map['id_usuario'], 
-      nombre: map['nombre'],
-      apellido: map['apellido'],
-      email: map['email'],
-      contrasenia: map['contraseña'],
-      tipoUsuario: map['tipo_usuario'],
-    );
-  }
-
-  // Convertir un objeto Usuario a un mapa
   Map<String, dynamic> toMap() {
     return {
-      'id_usuario': id_usuario, 
+      'id_usuario': id,
       'nombre': nombre,
       'apellido': apellido,
       'email': email,
-      'contraseña': contrasenia,
+      'contraseña': contrasena,
       'tipo_usuario': tipoUsuario,
     };
+  }
+
+  factory Usuario.fromMap(Map<String, dynamic> map) {
+    return Usuario(
+      id: map['id_usuario'],
+      nombre: map['nombre'],
+      apellido: map['apellido'],
+      email: map['email'],
+      contrasena: map['contraseña'],
+      tipoUsuario: map['tipo_usuario'],
+    );
   }
 }

@@ -1,103 +1,84 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
-import '../models/usuario.dart';
 
-class RegistrarPage extends StatelessWidget {
+class RegistrarPage extends StatefulWidget {
   const RegistrarPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final DatabaseHelper _dbHelper = DatabaseHelper();
+  _RegistrarPageState createState() => _RegistrarPageState();
+}
 
+class _RegistrarPageState extends State<RegistrarPage> {
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _apellidoController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _contrasenaController = TextEditingController();
+  String _tipoUsuario = 'paciente';
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar Usuario'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: RegistrarForm(dbHelper: _dbHelper),
+        child: Column(
+          children: [
+            TextField(
+              controller: _nombreController,
+              decoration: const InputDecoration(labelText: 'Nombre'),
+            ),
+            TextField(
+              controller: _apellidoController,
+              decoration: const InputDecoration(labelText: 'Apellido'),
+            ),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: _contrasenaController,
+              decoration: const InputDecoration(labelText: 'Contraseña'),
+              obscureText: true,
+            ),
+            DropdownButton<String>(
+              value: _tipoUsuario,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _tipoUsuario = newValue!;
+                });
+              },
+              items: <String>['paciente', 'profesional']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _registrarUsuario();
+              },
+              child: const Text('Registrar'),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
 
-class RegistrarForm extends StatefulWidget {
-  final DatabaseHelper dbHelper;
-
-  const RegistrarForm({Key? key, required this.dbHelper}) : super(key: key);
-
-  @override
-  _RegistrarFormState createState() => _RegistrarFormState();
-}
-
-class _RegistrarFormState extends State<RegistrarForm> {
-  String nombre = '';
-  String apellido = '';
-  String email = '';
-  String contrasenia = '';
-  String tipoUsuario = 'paciente'; // Valor por defecto
-
-  Future<void> _addUsuario() async {
-    final usuario = Usuario(
-      id_usuario: 0, // ID será manejado automáticamente por la base de datos
-      nombre: nombre,
-      apellido: apellido,
-      email: email,
-      contrasenia: contrasenia,
-      tipoUsuario: tipoUsuario,
-    );
-
-    try {
-      await widget.dbHelper.insertUsuario(usuario.toMap());
-      Navigator.pop(context, true); // Regresar a la página anterior e indicar éxito
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al registrar usuario: $e')),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          onChanged: (value) => nombre = value,
-          decoration: const InputDecoration(labelText: 'Nombre'),
-        ),
-        TextField(
-          onChanged: (value) => apellido = value,
-          decoration: const InputDecoration(labelText: 'Apellido'),
-        ),
-        TextField(
-          onChanged: (value) => email = value,
-          decoration: const InputDecoration(labelText: 'Email'),
-        ),
-        TextField(
-          onChanged: (value) => contrasenia = value,
-          decoration: const InputDecoration(labelText: 'Contraseña'),
-          obscureText: true,
-        ),
-        DropdownButton<String>(
-          value: tipoUsuario,
-          onChanged: (String? newValue) {
-            setState(() {
-              tipoUsuario = newValue!;
-            });
-          },
-          items: <String>['paciente', 'profesional']
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-        ElevatedButton(
-          onPressed: _addUsuario,
-          child: const Text('Registrar'),
-        ),
-      ],
-    );
+  Future<void> _registrarUsuario() async {
+    final usuario = {
+      'nombre': _nombreController.text,
+      'apellido': _apellidoController.text,
+      'email': _emailController.text,
+      'contraseña': _contrasenaController.text,
+      'tipo_usuario': _tipoUsuario,
+    };
+    await _databaseHelper.insertUsuario(usuario);
+    Navigator.pop(context);
   }
 }

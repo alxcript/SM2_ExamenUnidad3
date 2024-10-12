@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import '../models/usuario.dart';
+
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
@@ -89,29 +91,62 @@ class DatabaseHelper {
 
   // Métodos para insertar, obtener, actualizar y eliminar
 
-  // Método para insertar un usuario
   Future<void> insertUsuario(Map<String, dynamic> usuario) async {
     final db = await database;
     await db.insert('Usuarios', usuario);
   }
 
-// Método para obtener todos los usuarios
   Future<List<Map<String, dynamic>>> getUsuarios() async {
     final db = await database;
     return await db.query('Usuarios');
   }
 
-// Método para actualizar un usuario
   Future<int> updateUsuario(int id, Map<String, dynamic> usuario) async {
     final db = await database;
     return await db
         .update('Usuarios', usuario, where: 'id_usuario = ?', whereArgs: [id]);
   }
 
-// Método para eliminar un usuario
   Future<int> deleteUsuario(int id) async {
     final db = await database;
     return await db
         .delete('Usuarios', where: 'id_usuario = ?', whereArgs: [id]);
+  }
+
+  // Método para obtener historias clínicas por usuario
+  Future<List<Map<String, dynamic>>> getHistoriasClinicasPorUsuario(
+      int idUsuario) async {
+    final db = await database;
+    return await db.query(
+      'Historias_Clinicas',
+      where: 'id_usuario = ?',
+      whereArgs: [idUsuario],
+    );
+  }
+
+  // Método para insertar una historia clínica
+  Future<void> insertHistoriaClinica(Map<String, dynamic> historia) async {
+    final db = await database;
+    await db.insert('Historias_Clinicas', historia);
+  }
+
+  Future<List<Usuario>> getUsuariosPorTipo(String tipo) async {
+    final Database db =
+        await database; // Obtén la instancia de tu base de datos
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Usuarios',
+      where: 'tipo_usuario = ?',
+      whereArgs: [tipo],
+    );
+
+    return List.generate(maps.length, (i) {
+      return Usuario.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getTodasLasHistoriasClinicas() async {
+    final db = await database;
+    return await db.query(
+        'Historias_Clinicas'); // Consulta para obtener todas las historias clínicas
   }
 }

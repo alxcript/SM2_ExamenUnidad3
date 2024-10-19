@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import '../models/historia_clinica.dart';
-import 'crear_historia_clinica_page.dart'; // Importar la página para crear historias clínicas
+import 'crear_historia_clinica_page.dart';
 
 class HistoriaClinicaPage extends StatefulWidget {
-  final int idUsuario; // ID del usuario para obtener sus historias clínicas
-  final String tipoUsuario; // Tipo de usuario para mostrar el botón si es profesional
+  final int idUsuario;
+  final String tipoUsuario; // Puede ser 'profesional' o 'paciente'
+  final String nombre;
+  final String apellido;
 
   const HistoriaClinicaPage({
     Key? key,
     required this.idUsuario,
     required this.tipoUsuario,
+    required this.nombre,
+    required this.apellido,
   }) : super(key: key);
 
   @override
@@ -31,15 +35,15 @@ class _HistoriaClinicaPageState extends State<HistoriaClinicaPage> {
     List<Map<String, dynamic>> historias;
 
     if (widget.tipoUsuario == 'profesional') {
-      // Si es un profesional, cargar todas las historias clínicas
       historias = await _databaseHelper.getTodasLasHistoriasClinicas();
     } else {
-      // Si es un paciente, cargar solo sus historias clínicas
-      historias = await _databaseHelper.getHistoriasClinicasPorUsuario(widget.idUsuario);
+      historias = await _databaseHelper
+          .getHistoriasClinicasPorUsuario(widget.idUsuario);
     }
 
     setState(() {
-      _historiasClinicas = historias.map((json) => HistoriaClinica.fromMap(json)).toList();
+      _historiasClinicas =
+          historias.map((json) => HistoriaClinica.fromMap(json)).toList();
     });
   }
 
@@ -49,10 +53,43 @@ class _HistoriaClinicaPageState extends State<HistoriaClinicaPage> {
       MaterialPageRoute(
         builder: (context) => CrearHistoriaClinicaPage(
           idUsuario: widget.idUsuario,
-          tipoUsuario: widget.tipoUsuario, // Pasar tipo de usuario
+          tipoUsuario: widget.tipoUsuario,
+          nombre: widget.nombre,
+          apellido: widget.apellido,
         ),
       ),
-    ).then((_) => _cargarHistoriasClinicas()); // Recargar historias clínicas después de volver
+    ).then((_) => _cargarHistoriasClinicas());
+  }
+
+  void _eliminarHistoriaClinica(int idHistoria) async {
+    await _databaseHelper.deleteHistoriaClinica(idHistoria);
+    _cargarHistoriasClinicas();
+  }
+
+  void _confirmarEliminacion(int idHistoria) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar Historia Clínica'),
+        content: const Text(
+            '¿Estás seguro de que deseas eliminar esta historia clínica?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _eliminarHistoriaClinica(idHistoria);
+              Navigator.of(context).pop();
+            },
+            child: const Text('Sí'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('No'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -63,7 +100,6 @@ class _HistoriaClinicaPageState extends State<HistoriaClinicaPage> {
       ),
       body: Column(
         children: [
-          // Mostrar botón "Agregar Historia Clínica" solo para profesionales
           if (widget.tipoUsuario == 'profesional') ...[
             ElevatedButton(
               onPressed: _agregarHistoriaClinica,
@@ -78,9 +114,24 @@ class _HistoriaClinicaPageState extends State<HistoriaClinicaPage> {
                 final historia = _historiasClinicas[index];
                 return ListTile(
                   title: Text('Historia #${historia.idHistoria}'),
-                  subtitle: Text('Diagnóstico: ${historia.diagnostico ?? 'N/A'}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          'Paciente: ${historia.nombrePaciente} ${historia.apellidoPaciente}'),
+                      Text('Diagnóstico: ${historia.diagnostico ?? 'N/A'}'),
+                      Text('Síntomas: ${historia.sintomas}'),
+                    ],
+                  ),
+                  trailing: widget.tipoUsuario == 'profesional'
+                      ? IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () =>
+                              _confirmarEliminacion(historia.idHistoria),
+                        )
+                      : null,
                   onTap: () {
-                    // Aquí puedes agregar navegación a una página de detalles si es necesario
+                    // Navegación a detalles si es necesario
                   },
                 );
               },

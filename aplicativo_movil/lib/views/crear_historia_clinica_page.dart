@@ -1,39 +1,59 @@
 import 'package:flutter/material.dart';
-import '../database/database_helper.dart';
-import 'home_screen.dart'; // Asegúrate de importar HomeScreen
-import '../models/usuario.dart'; // Importar el modelo de Usuario
+import '../controllers/historia_clinica_controller.dart';
+import '../models/usuario.dart';
+import 'home_screen.dart';
 
 class CrearHistoriaClinicaPage extends StatefulWidget {
-  final int idUsuario; // ID del usuario (profesional)
-  final String tipoUsuario; // Tipo de usuario (profesional)
+  final int idUsuario;
+  final String tipoUsuario;
+  final String nombre;
+  final String apellido;
 
   const CrearHistoriaClinicaPage({
     Key? key,
     required this.idUsuario,
     required this.tipoUsuario,
+    required this.nombre,
+    required this.apellido,
   }) : super(key: key);
 
   @override
-  _CrearHistoriaClinicaPageState createState() => _CrearHistoriaClinicaPageState();
+  _CrearHistoriaClinicaPageState createState() =>
+      _CrearHistoriaClinicaPageState();
 }
 
 class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-  final TextEditingController _diagnosticoController = TextEditingController();
-  final TextEditingController _tratamientosController = TextEditingController();
-  final TextEditingController _observacionesController = TextEditingController();
+  final HistoriaClinicaController _controller = HistoriaClinicaController();
+  List<Usuario> _pacientes = [];
+  Usuario? _selectedPaciente;
 
-  List<Usuario> _pacientes = []; // Lista de pacientes
-  Usuario? _selectedPaciente; // Paciente seleccionado
+  final TextEditingController _diagnosticoController = TextEditingController();
+  final TextEditingController _sintomasController = TextEditingController();
+  final TextEditingController _motivoConsultaController =
+      TextEditingController();
+  final TextEditingController _antecedentesPersonalesController =
+      TextEditingController();
+  final TextEditingController _antecedentesFamiliaresController =
+      TextEditingController();
+  final TextEditingController _alergiasController = TextEditingController();
+  final TextEditingController _medicamentosActualesController =
+      TextEditingController();
+  final TextEditingController _indicacionesController = TextEditingController();
+  final TextEditingController _recomendacionesController =
+      TextEditingController();
+  final TextEditingController _observacionesController =
+      TextEditingController();
+  final TextEditingController _resultadosExamenesController =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _cargarPacientes();
+    _fetchPacientes();
   }
 
-  Future<void> _cargarPacientes() async {
-    final pacientes = await _databaseHelper.getUsuariosPorTipo('paciente');
+  void _fetchPacientes() async {
+    List<Usuario> pacientes = await _controller.obtenerPacientes();
     setState(() {
       _pacientes = pacientes;
     });
@@ -41,29 +61,36 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
 
   void _guardarHistoriaClinica() async {
     if (_selectedPaciente == null) {
-      // Mostrar un mensaje de error si no se ha seleccionado un paciente
+      // Mostrar un mensaje de error si no hay paciente seleccionado
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, selecciona un paciente.')),
+        SnackBar(content: Text('Por favor, seleccione un paciente.')),
       );
       return;
     }
 
-    final historia = {
-      'id_usuario': _selectedPaciente!.id, // Usar el ID del paciente seleccionado
-      'diagnostico': _diagnosticoController.text,
-      'tratamientos': _tratamientosController.text,
-      'observaciones': _observacionesController.text,
-    };
+    await _controller.guardarHistoriaClinica(
+      idUsuario: _selectedPaciente!.id,
+      diagnostico: _diagnosticoController.text,
+      sintomas: _sintomasController.text,
+      motivoConsulta: _motivoConsultaController.text,
+      antecedentesPersonales: _antecedentesPersonalesController.text,
+      antecedentesFamiliares: _antecedentesFamiliaresController.text,
+      alergias: _alergiasController.text,
+      medicamentosActuales: _medicamentosActualesController.text,
+      indicaciones: _indicacionesController.text,
+      recomendaciones: _recomendacionesController.text,
+      observaciones: _observacionesController.text,
+      resultadosExamenes: _resultadosExamenesController.text,
+    );
 
-    await _databaseHelper.insertHistoriaClinica(historia);
-
-    // Regresar a HomeScreen después de guardar
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => HomeScreen(
           tipoUsuario: widget.tipoUsuario,
           idUsuario: widget.idUsuario,
+          nombre: widget.nombre,
+          apellido: widget.apellido,
         ),
       ),
     );
@@ -75,36 +102,84 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
       appBar: AppBar(
         title: const Text('Crear Historia Clínica'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            DropdownButton<Usuario?>(
-              hint: const Text('Selecciona un paciente'),
+            DropdownButton<Usuario>(
+              hint: const Text('Seleccionar Paciente'),
               value: _selectedPaciente,
-              onChanged: (Usuario? nuevoPaciente) {
-                setState(() {
-                  _selectedPaciente = nuevoPaciente;
-                });
-              },
-              items: _pacientes.map((Usuario paciente) {
-                return DropdownMenuItem<Usuario?>(
+              items: _pacientes.map((paciente) {
+                return DropdownMenuItem<Usuario>(
                   value: paciente,
                   child: Text('${paciente.nombre} ${paciente.apellido}'),
                 );
               }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedPaciente = value;
+                });
+              },
             ),
             TextField(
               controller: _diagnosticoController,
               decoration: const InputDecoration(labelText: 'Diagnóstico'),
+              maxLines: 2,
             ),
             TextField(
-              controller: _tratamientosController,
-              decoration: const InputDecoration(labelText: 'Tratamientos'),
+              controller: _sintomasController,
+              decoration: const InputDecoration(labelText: 'Síntomas'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _motivoConsultaController,
+              decoration:
+                  const InputDecoration(labelText: 'Motivo de Consulta'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _antecedentesPersonalesController,
+              decoration:
+                  const InputDecoration(labelText: 'Antecedentes Personales'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _antecedentesFamiliaresController,
+              decoration:
+                  const InputDecoration(labelText: 'Antecedentes Familiares'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _alergiasController,
+              decoration: const InputDecoration(labelText: 'Alergias'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _medicamentosActualesController,
+              decoration:
+                  const InputDecoration(labelText: 'Medicamentos Actuales'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _indicacionesController,
+              decoration: const InputDecoration(labelText: 'Indicaciones'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _recomendacionesController,
+              decoration: const InputDecoration(labelText: 'Recomendaciones'),
+              maxLines: 2,
             ),
             TextField(
               controller: _observacionesController,
               decoration: const InputDecoration(labelText: 'Observaciones'),
+              maxLines: 2,
+            ),
+            TextField(
+              controller: _resultadosExamenesController,
+              decoration:
+                  const InputDecoration(labelText: 'Resultados de Exámenes'),
+              maxLines: 2,
             ),
             const SizedBox(height: 20),
             ElevatedButton(

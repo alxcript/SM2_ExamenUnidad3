@@ -1,5 +1,5 @@
 class Usuario {
-  final int id;
+  final int id; // Cambia 'id_usuario' a 'id'
   final String nombre;
   final String apellido;
   final String email;
@@ -17,7 +17,7 @@ class Usuario {
 
   Map<String, dynamic> toMap() {
     return {
-      'id_usuario': id,
+      'id_usuario': id, // Aquí sigue usando 'id_usuario' para la base de datos
       'nombre': nombre,
       'apellido': apellido,
       'email': email,
@@ -28,7 +28,7 @@ class Usuario {
 
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
-      id: map['id_usuario'],
+      id: map['id_usuario'], // Asegúrate de usar 'id_usuario' aquí
       nombre: map['nombre'],
       apellido: map['apellido'],
       email: map['email'],

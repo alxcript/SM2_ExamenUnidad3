@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import 'home_screen.dart';
+import 'registrar_page.dart'; // Import the RegistrarPage
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -54,7 +55,12 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             TextButton(
               onPressed: () {
-                // Aquí puedes navegar a la página de registro si lo necesitas
+                // Navigate to the registration page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RegistrarPage()),
+                );
               },
               child: const Text('¿No tienes una cuenta? Regístrate'),
             ),
@@ -82,6 +88,8 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context) => HomeScreen(
             tipoUsuario: usuario['tipo_usuario'],
             idUsuario: usuario['id_usuario'], // Pasar ID del usuario
+            nombre: usuario['nombre'], // Pasar nombre
+            apellido: usuario['apellido'], // Pasar apellido
           ),
         ),
       );

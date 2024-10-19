@@ -18,6 +18,7 @@ class DatabaseHelper {
 
   Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), 'gestion_historia_clinica.db');
+    await deleteDatabase(path);
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
@@ -38,17 +39,25 @@ class DatabaseHelper {
 
     // Crear tabla Historias Clínicas
     await db.execute('''
-        CREATE TABLE IF NOT EXISTS Historias_Clinicas (
-            id_historia INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_usuario INTEGER NOT NULL,
-            fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-            fecha_modificacion DATETIME DEFAULT CURRENT_TIMESTAMP, -- Solo inicial
-            diagnostico TEXT,
-            tratamientos TEXT,
-            observaciones TEXT,
-            FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
-        )
-    ''');
+      CREATE TABLE IF NOT EXISTS Historias_Clinicas (
+        id_historia INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_usuario INTEGER NOT NULL,
+        fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+        fecha_modificacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+        diagnostico TEXT,
+        sintomas TEXT,
+        motivo_consulta TEXT,
+        antecedentes_personales TEXT,
+        antecedentes_familiares TEXT,
+        alergias TEXT,
+        medicamentos_actuales TEXT,
+        indicaciones TEXT,
+        recomendaciones TEXT,
+        observaciones TEXT,
+        resultados_examenes TEXT,
+        FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE
+    );
+  ''');
 
     // Crear tabla Citas Médicas
     await db.execute('''
@@ -113,17 +122,6 @@ class DatabaseHelper {
         .delete('Usuarios', where: 'id_usuario = ?', whereArgs: [id]);
   }
 
-  // Método para obtener historias clínicas por usuario
-  Future<List<Map<String, dynamic>>> getHistoriasClinicasPorUsuario(
-      int idUsuario) async {
-    final db = await database;
-    return await db.query(
-      'Historias_Clinicas',
-      where: 'id_usuario = ?',
-      whereArgs: [idUsuario],
-    );
-  }
-
   // Método para insertar una historia clínica
   Future<void> insertHistoriaClinica(Map<String, dynamic> historia) async {
     final db = await database;
@@ -131,8 +129,7 @@ class DatabaseHelper {
   }
 
   Future<List<Usuario>> getUsuariosPorTipo(String tipo) async {
-    final Database db =
-        await database; // Obtén la instancia de tu base de datos
+    final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       'Usuarios',
       where: 'tipo_usuario = ?',
@@ -144,9 +141,35 @@ class DatabaseHelper {
     });
   }
 
+  // Método para obtener historias clínicas por usuario
+  Future<List<Map<String, dynamic>>> getHistoriasClinicasPorUsuario(
+      int idUsuario) async {
+    final db = await database;
+    return await db.rawQuery('''
+    SELECT h.*, u.nombre AS nombre_paciente, u.apellido AS apellido_paciente
+    FROM Historias_Clinicas h
+    JOIN Usuarios u ON h.id_usuario = u.id_usuario
+    WHERE h.id_usuario = ?
+  ''', [idUsuario]);
+  }
+
+  // Método para obtener todas las historias clínicas
   Future<List<Map<String, dynamic>>> getTodasLasHistoriasClinicas() async {
     final db = await database;
-    return await db.query(
-        'Historias_Clinicas'); // Consulta para obtener todas las historias clínicas
+    return await db.rawQuery('''
+    SELECT h.*, u.nombre AS nombre_paciente, u.apellido AS apellido_paciente
+    FROM Historias_Clinicas h
+    JOIN Usuarios u ON h.id_usuario = u.id_usuario
+  ''');
+  }
+
+  // Método para eliminar una historia clínica
+  Future<int> deleteHistoriaClinica(int idHistoria) async {
+    final db = await database;
+    return await db.delete(
+      'Historias_Clinicas',
+      where: 'id_historia = ?',
+      whereArgs: [idHistoria],
+    );
   }
 }

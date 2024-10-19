@@ -1,4 +1,3 @@
-// views/home_screen.dart
 import 'package:flutter/material.dart';
 import 'usuarios_page.dart';
 import 'registrar_page.dart';
@@ -9,8 +8,16 @@ import 'gestionar_citas_page.dart'; // Asegúrate de tener la página de gestió
 class HomeScreen extends StatefulWidget {
   final String tipoUsuario;
   final int idUsuario; // Agregar el ID del usuario como parámetro
+  final String nombre; // Agregar el nombre del usuario
+  final String apellido; // Agregar el apellido del usuario
 
-  const HomeScreen({Key? key, required this.tipoUsuario, required this.idUsuario}) : super(key: key);
+  const HomeScreen({
+    Key? key,
+    required this.tipoUsuario,
+    required this.idUsuario,
+    required this.nombre, // Recibir el nombre
+    required this.apellido, // Recibir el apellido
+  }) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -21,7 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestión de Usuarios'),
+        title: Text(
+            'Bienvenido, ${widget.nombre} ${widget.apellido}'), // Mostrar mensaje de bienvenida
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -47,6 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => HistoriaClinicaPage(
                       idUsuario: widget.idUsuario,
                       tipoUsuario: widget.tipoUsuario, // Pasar tipo de usuario
+                      nombre: widget.nombre, // Pasar nombre
+                      apellido: widget.apellido, // Pasar apellido
                     ),
                   ),
                 );
@@ -59,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const UsuariosPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const UsuariosPage()),
                   );
                 },
                 child: const Text('Ver Usuarios'),
@@ -68,10 +79,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const GestionarCitasPage()), // Asegúrate de tener esta página
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const GestionarCitasPage(), // Asegúrate de tener esta página
+                    ),
                   );
                 },
                 child: const Text('Gestionar Citas'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RegistrarPage()),
+                  );
+                },
+                child: const Text('Registrar Usuario'),
               ),
             ] else if (widget.tipoUsuario == 'paciente') ...[
               ElevatedButton(
@@ -81,15 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Text('Solicitar Cita'),
               ),
             ],
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegistrarPage()),
-                );
-              },
-              child: const Text('Registrar Usuario'),
-            ),
           ],
         ),
       ),

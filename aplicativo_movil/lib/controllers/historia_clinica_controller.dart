@@ -1,25 +1,40 @@
-// historia_clinica_controller.dart
-
 import '../database/database_helper.dart';
+import '../models/usuario.dart';
 
 class HistoriaClinicaController {
   final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  Future<List<Map<String, dynamic>>> obtenerPacientes() async {
-    final usuarios = await _databaseHelper.getUsuarios();
-    return usuarios.where((usuario) => usuario['tipo_usuario'] == 'paciente').toList();
+  Future<List<Usuario>> obtenerPacientes() async {
+    return await _databaseHelper.getUsuariosPorTipo('paciente');
   }
 
-  Future<List<Map<String, dynamic>>> obtenerHistoriasClinicasPorUsuario(int idUsuario) async {
-    return await _databaseHelper.getHistoriasClinicasPorUsuario(idUsuario);
-  }
-
-  Future<void> crearHistoriaClinica(int idUsuario, String diagnostico, String tratamientos, String observaciones) async {
+  Future<void> guardarHistoriaClinica({
+    required int idUsuario,
+    required String diagnostico,
+    required String sintomas,
+    required String motivoConsulta,
+    required String antecedentesPersonales,
+    required String antecedentesFamiliares,
+    required String alergias,
+    required String medicamentosActuales,
+    required String indicaciones,
+    required String recomendaciones,
+    required String observaciones,
+    required String resultadosExamenes,
+  }) async {
     final historia = {
       'id_usuario': idUsuario,
       'diagnostico': diagnostico,
-      'tratamientos': tratamientos,
+      'sintomas': sintomas,
+      'motivo_consulta': motivoConsulta,
+      'antecedentes_personales': antecedentesPersonales,
+      'antecedentes_familiares': antecedentesFamiliares,
+      'alergias': alergias,
+      'medicamentos_actuales': medicamentosActuales,
+      'indicaciones': indicaciones,
+      'recomendaciones': recomendaciones,
       'observaciones': observaciones,
+      'resultados_examenes': resultadosExamenes,
     };
     await _databaseHelper.insertHistoriaClinica(historia);
   }

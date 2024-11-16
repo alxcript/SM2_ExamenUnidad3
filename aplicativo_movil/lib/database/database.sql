@@ -27,11 +27,11 @@ CREATE TABLE IF NOT EXISTS Historias_Clinicas (
 
 -- Tabla Citas Médicas
 CREATE TABLE IF NOT EXISTS Citas_Medicas (
-    id_cita INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    id_profesional INT NOT NULL,
+    id_cita INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario INTEGER NOT NULL,
+    id_profesional INTEGER NOT NULL,
     fecha_cita DATETIME NOT NULL,
-    estado ENUM('pendiente', 'confirmada', 'cancelada') NOT NULL,
+    estado TEXT CHECK(estado IN ('pendiente', 'confirmada', 'cancelada')),
     observaciones TEXT,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_profesional) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE

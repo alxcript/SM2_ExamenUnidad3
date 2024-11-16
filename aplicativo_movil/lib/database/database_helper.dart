@@ -172,4 +172,30 @@ class DatabaseHelper {
       whereArgs: [idHistoria],
     );
   }
+
+      // Obtener todas las citas
+    Future<List<Map<String, dynamic>>> getTodasLasCitas() async {
+      final db = await database;
+      return db.query('Citas_Medicas');
+    }
+
+    // Insertar una nueva cita
+    Future<void> insertCita(Map<String, dynamic> cita) async {
+      final db = await database;
+      await db.insert('Citas_Medicas', cita);
+    }
+
+    // Actualizar una cita existente
+    Future<int> updateCita(int idCita, Map<String, dynamic> cita) async {
+      final db = await database;
+      return db.update('Citas_Medicas', cita,
+          where: 'id_cita = ?', whereArgs: [idCita]);
+    }
+
+    // Eliminar una cita
+    Future<int> deleteCita(int idCita) async {
+      final db = await database;
+      return db.delete('Citas_Medicas', where: 'id_cita = ?', whereArgs: [idCita]);
+    }
+
 }

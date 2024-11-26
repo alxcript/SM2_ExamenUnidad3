@@ -96,6 +96,13 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
     );
   }
 
+  void _generarDiagnosticoIA() async {
+    String diagnostico = await _controller.generarDiagnosticoIA();
+    setState(() {
+      _resultadosExamenesController.text = diagnostico;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,6 +181,10 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
               controller: _observacionesController,
               decoration: const InputDecoration(labelText: 'Observaciones'),
               maxLines: 2,
+            ),
+            ElevatedButton(
+              onPressed: _generarDiagnosticoIA,
+              child: const Text('Generar Diagnostico con IA'),
             ),
             TextField(
               controller: _resultadosExamenesController,

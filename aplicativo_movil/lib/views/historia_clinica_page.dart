@@ -128,7 +128,7 @@ class _HistoriaClinicaPageState extends State<HistoriaClinicaPage> {
                 labelText: 'Buscar historias clínicas',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
-                hintText: 'Buscar por nombre o diagnóstico',
+                hintText: 'Buscar por nombre',
               ),
               onChanged: _buscarHistorias,
             ),

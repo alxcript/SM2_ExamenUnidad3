@@ -11,7 +11,7 @@ class HistoriaClinicaController {
     return await _databaseHelper.getUsuariosPorTipo('paciente');
   }
 
-  Future<String> generarDiagnosticoIA() async {
+  Future<String> generarDiagnosticoIA(String prompt) async {
     String apiKey = 'AIzaSyD3ah7hOp08dubenTuGL-GekUtswQO7SGs';
     Uri url = Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey');
 
@@ -19,7 +19,7 @@ class HistoriaClinicaController {
       'contents': [
         {
           'parts': [
-            {'text': 'Fiebre y dolor de cabeza por 3 dias, cual podria ser el diagnóstico médico?.'}
+            {'text': prompt}
           ]
         }
       ]
@@ -35,7 +35,16 @@ class HistoriaClinicaController {
       );
 
       if (response.statusCode == 200) {
-        return response.body;
+        // Parsear la respuesta JSON
+        var data = json.decode(response.body);
+        // Extraer el texto limpio
+        String text = data['candidates'][0]['content']['parts'][0]['text'];
+
+        // Limpiar el texto: eliminar asteriscos, saltos de línea y otros caracteres no deseados
+        text = text.replaceAll(RegExp(r'\*\*'), ''); // Eliminar asteriscos
+        text = text.replaceAll('\n', ' '); // Eliminar saltos de línea
+
+        return text.trim(); 
       } else {
         return 'Error: ${response.statusCode} - ${response.body}';
       }

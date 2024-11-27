@@ -1,4 +1,3 @@
-// seleccionar_paciente.dart
 import 'package:flutter/material.dart';
 
 class SeleccionarPaciente extends StatelessWidget {

@@ -61,7 +61,6 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
 
   void _guardarHistoriaClinica() async {
     if (_selectedPaciente == null) {
-      // Mostrar un mensaje de error si no hay paciente seleccionado
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Por favor, seleccione un paciente.')),
       );

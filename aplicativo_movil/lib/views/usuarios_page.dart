@@ -102,7 +102,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   void _eliminarUsuario(int idUsuario) async {
     await _databaseHelper.deleteUsuario(idUsuario);
-    _loadUsuarios(); // Recargar la lista después de eliminar
+    _loadUsuarios();
   }
 
   void _confirmarEliminacion(int idUsuario) {

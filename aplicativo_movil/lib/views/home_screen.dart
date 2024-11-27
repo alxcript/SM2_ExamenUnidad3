@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'usuarios_page.dart';
 import 'registrar_page.dart';
 import 'login_page.dart';
-import 'historia_clinica_page.dart'; // Importar la página de historias clínicas
-import 'gestionar_citas_page.dart'; // Asegúrate de tener la página de gestión de citas
+import 'historia_clinica_page.dart'; 
+import 'gestionar_citas_page.dart'; 
 
 class HomeScreen extends StatefulWidget {
   final String tipoUsuario;
-  final int idUsuario; // Agregar el ID del usuario como parámetro
-  final String nombre; // Agregar el nombre del usuario
-  final String apellido; // Agregar el apellido del usuario
+  final int idUsuario; 
+  final String nombre; 
+  final String apellido; 
 
   const HomeScreen({
     Key? key,
     required this.tipoUsuario,
     required this.idUsuario,
-    required this.nombre, // Recibir el nombre
-    required this.apellido, // Recibir el apellido
+    required this.nombre, 
+    required this.apellido, 
   }) : super(key: key);
 
   @override
@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Mostrar el mensaje después de que se construya el widget
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.tipoUsuario == 'paciente') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            'Bienvenido, ${widget.nombre} ${widget.apellido}'), // Mostrar mensaje de bienvenida
+            'Bienvenido, ${widget.nombre} ${widget.apellido}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -79,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Botón visible para todos los usuarios
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -87,16 +85,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(
                     builder: (context) => HistoriaClinicaPage(
                       idUsuario: widget.idUsuario,
-                      tipoUsuario: widget.tipoUsuario, // Pasar tipo de usuario
-                      nombre: widget.nombre, // Pasar nombre
-                      apellido: widget.apellido, // Pasar apellido
+                      tipoUsuario: widget.tipoUsuario, 
+                      nombre: widget.nombre, 
+                      apellido: widget.apellido, 
                     ),
                   ),
                 );
               },
               child: const Text('Ver Historial Clínico'),
             ),
-            // Condiciones para mostrar botones según el tipo de usuario
             if (widget.tipoUsuario == 'profesional') ...[
               ElevatedButton(
                 onPressed: () {
@@ -114,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          const GestionarCitasPage(), // Asegúrate de tener esta página
+                          const GestionarCitasPage(), 
                     ),
                   );
                 },

@@ -6,7 +6,7 @@ import '../controllers/historia_clinica_controller.dart';
 
 class HistoriaClinicaPage extends StatefulWidget {
   final int idUsuario;
-  final String tipoUsuario; // Puede ser 'profesional' o 'paciente'
+  final String tipoUsuario;
   final String nombre;
   final String apellido;
 

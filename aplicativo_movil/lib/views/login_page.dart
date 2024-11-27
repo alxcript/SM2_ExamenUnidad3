@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import 'home_screen.dart';
-import 'registrar_page.dart'; // Import the RegistrarPage
+import 'registrar_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -55,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             TextButton(
               onPressed: () {
-                // Navigate to the registration page
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -81,15 +80,14 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     if (usuario.isNotEmpty) {
-      // Usuario encontrado, redirigir a la pantalla principal
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => HomeScreen(
             tipoUsuario: usuario['tipo_usuario'],
-            idUsuario: usuario['id_usuario'], // Pasar ID del usuario
-            nombre: usuario['nombre'], // Pasar nombre
-            apellido: usuario['apellido'], // Pasar apellido
+            idUsuario: usuario['id_usuario'], 
+            nombre: usuario['nombre'], 
+            apellido: usuario['apellido'],
           ),
         ),
       );

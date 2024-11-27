@@ -97,6 +97,19 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
     );
   }
 
+  void _generarDiagnosticoIA() async {
+    String sintomas = _sintomasController.text;
+    String antecedentes = _antecedentesPersonalesController.text + ' ' + _antecedentesFamiliaresController.text;
+    String alergias = _alergiasController.text;
+    String medicamentos  = _medicamentosActualesController.text;
+
+    String prompt = "Mi paciente tiene los sintomas " + sintomas + ", Sus atecendetes son:" + antecedentes + ", sus alergias son: " +  alergias + ". Y esta tomando los siguientes medicamentos:" + medicamentos +". Cual podria ser el diagnóstico médico? No me digas que la informacion proporcionada es insuficiente. Solo dame las posibilidades a considerar, se corto y preciso.";
+    String diagnostico = await _controller.generarDiagnosticoIA(prompt);
+    setState(() {
+      _resultadosExamenesController.text = diagnostico;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,11 +189,16 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
               decoration: const InputDecoration(labelText: 'Observaciones'),
               maxLines: 2,
             ),
+            ElevatedButton(
+              onPressed: _generarDiagnosticoIA,
+              child: const Text('Generar Diagnostico con IA'),
+            ),
             TextField(
               controller: _resultadosExamenesController,
               decoration:
                   const InputDecoration(labelText: 'Resultados de Exámenes'),
-              maxLines: 2,
+              maxLines: 10,
+              minLines: 5,
             ),
             const SizedBox(height: 20),
             ElevatedButton(

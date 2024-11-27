@@ -42,6 +42,8 @@ class DatabaseHelper {
       CREATE TABLE IF NOT EXISTS Historias_Clinicas (
         id_historia INTEGER PRIMARY KEY AUTOINCREMENT,
         id_usuario INTEGER NOT NULL,
+        nombre_profesional TEXT,
+        apellido_profesional TEXT,
         fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
         fecha_modificacion DATETIME DEFAULT CURRENT_TIMESTAMP,
         diagnostico TEXT,
@@ -196,6 +198,16 @@ class DatabaseHelper {
     Future<int> deleteCita(int idCita) async {
       final db = await database;
       return db.delete('Citas_Medicas', where: 'id_cita = ?', whereArgs: [idCita]);
+    }
+
+    Future<List<Map<String, dynamic>>> buscarHistoriasClinicas(String query) async {
+      final db = await database;
+      return await db.rawQuery('''
+        SELECT h.*, u.nombre AS nombre_paciente, u.apellido AS apellido_paciente
+        FROM Historias_Clinicas h
+        JOIN Usuarios u ON h.id_usuario = u.id_usuario
+        WHERE u.nombre LIKE ? OR u.apellido LIKE ? OR h.diagnostico LIKE ?
+      ''', ['%$query%', '%$query%', '%$query%']);
     }
 
 }

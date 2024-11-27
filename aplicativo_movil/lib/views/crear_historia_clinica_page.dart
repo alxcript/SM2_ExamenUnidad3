@@ -70,6 +70,8 @@ class _CrearHistoriaClinicaPageState extends State<CrearHistoriaClinicaPage> {
 
     await _controller.guardarHistoriaClinica(
       idUsuario: _selectedPaciente!.id,
+      nombreProfesional: widget.nombre,
+      apellidoProfesional: widget.apellido,
       diagnostico: _diagnosticoController.text,
       sintomas: _sintomasController.text,
       motivoConsulta: _motivoConsultaController.text,

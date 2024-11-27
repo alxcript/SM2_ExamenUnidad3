@@ -14,6 +14,8 @@ class HistoriaClinica {
   final String resultadosExamenes;
   final String? nombrePaciente; // Agregar nombre del paciente
   final String? apellidoPaciente; // Agregar apellido del paciente
+  final String? nombreProfesional;
+  final String? apellidoProfesional;
 
   HistoriaClinica({
     required this.idHistoria,
@@ -31,6 +33,8 @@ class HistoriaClinica {
     required this.resultadosExamenes,
     required this.nombrePaciente, // Agregar en el constructor
     required this.apellidoPaciente, // Agregar en el constructor
+    this.nombreProfesional,
+    this.apellidoProfesional,
   });
 
   factory HistoriaClinica.fromMap(Map<String, dynamic> map) {
@@ -52,6 +56,8 @@ class HistoriaClinica {
           map['nombre_paciente'] ?? 'N/A', // Obtener el nombre del paciente
       apellidoPaciente:
           map['apellido_paciente'] ?? 'N/A', // Obtener el apellido del paciente
+      nombreProfesional: map['nombre_profesional'] ?? 'N/A',
+      apellidoProfesional: map['apellido_profesional'] ?? 'N/A',
     );
   }
 

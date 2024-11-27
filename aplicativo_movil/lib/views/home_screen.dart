@@ -25,6 +25,39 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Mostrar el mensaje después de que se construya el widget
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.tipoUsuario == 'paciente') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Tienes un historial clínico pendiente'),
+            action: SnackBarAction(
+              label: 'Ver Ahora',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HistoriaClinicaPage(
+                      idUsuario: widget.idUsuario,
+                      tipoUsuario: widget.tipoUsuario,
+                      nombre: widget.nombre,
+                      apellido: widget.apellido,
+                    ),
+                  ),
+                );
+              },
+            ),
+            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

@@ -21,11 +21,17 @@ jobs:
       with:
         flutter-version: "stable"
 
+    - name: Cambiar a carpeta de la aplicación Flutter
+      working-directory: aplicativo_movil
+
     - name: Obtener dependencias
+      working-directory: aplicativo_movil
       run: flutter pub get
 
     - name: Análisis de código estático
+      working-directory: aplicativo_movil
       run: flutter analyze
 
     - name: Ejecutar pruebas unitarias
+      working-directory: aplicativo_movil
       run: flutter test

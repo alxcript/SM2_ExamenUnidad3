@@ -1,4 +1,4 @@
-name: Dart CI Pipeline
+name: Flutter CI Pipeline
 
 on:
   push:
@@ -9,23 +9,23 @@ on:
       - main
 
 jobs:
-  dart_quality_check:
+  flutter_quality_check:
     runs-on: ubuntu-latest
 
     steps:
     - name: Clonar Repositorio
       uses: actions/checkout@v2
 
-    - name: Configurar Dart SDK
-      uses: dart-lang/setup-dart@v1
+    - name: Configurar Flutter SDK
+      uses: subosito/flutter-action@v2
       with:
-        sdk: stable
+        flutter-version: "stable"
 
     - name: Obtener dependencias
-      run: dart pub get
+      run: flutter pub get
 
-    - name: Analisis de codigo estatico
-      run: dart analyze
+    - name: Análisis de código estático
+      run: flutter analyze
 
-    - name: Ejecutar test unitarios
-      run: dart test
+    - name: Ejecutar pruebas unitarias
+      run: flutter test

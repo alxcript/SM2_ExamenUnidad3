@@ -21,9 +21,6 @@ jobs:
       with:
         flutter-version: "stable"
 
-    - name: Cambiar a carpeta de la aplicación Flutter
-      working-directory: aplicativo_movil
-
     - name: Obtener dependencias
       working-directory: aplicativo_movil
       run: flutter pub get

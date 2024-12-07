@@ -1,4 +1,4 @@
-name: Quality Check
+name: Dart CI Pipeline
 
 on:
   push:
@@ -9,23 +9,23 @@ on:
       - main
 
 jobs:
-  quality:
+  dart_quality_check:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Clonar Repositorio
       uses: actions/checkout@v2
 
-    - name: Set up Dart
+    - name: Configurar Dart SDK
       uses: dart-lang/setup-dart@v1
       with:
         sdk: stable
 
-    - name: Install dependencies
+    - name: Obtener dependencias
       run: dart pub get
 
-    - name: Analyze code
+    - name: Analisis de codigo estatico
       run: dart analyze
 
-    - name: Run tests
+    - name: Ejecutar test unitarios
       run: dart test

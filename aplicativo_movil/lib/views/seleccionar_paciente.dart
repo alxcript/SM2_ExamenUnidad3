@@ -15,7 +15,7 @@ class SeleccionarPaciente extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      hint: const Text('Selecciona un paciente para agregar'),
+      hint: const Text('Selecciona un paciente'),
       value: selectedPaciente,
       onChanged: onChanged,
       items: pacientes.map<DropdownMenuItem<String>>((String paciente) {
